@@ -1,2 +1,1 @@
-# laubinger_hayley
-This repository belongs to halaubi
+# This repository belongs to halaubi
