@@ -34,6 +34,7 @@ ansc <-
     
 ```
 
+# Wrangle Data
 ```{r}
 ansc <-
   bind_cols(
@@ -52,5 +53,16 @@ ansc <-
 ```{r}
 ansc
 ```
-
+# Perform some calculations
+```{r}
+ansc %>%
+  group_by(dataset) %>%
+  summarize(
+    mean_x = mean(x),
+    stdev_x = sd(x),
+    mean_y = mean(y),
+    stdev_y = sd(y)
+  )
+```
+# stage and commit method 3
 
