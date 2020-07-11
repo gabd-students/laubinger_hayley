@@ -14,7 +14,12 @@ plot(cars)
 
 ```{r}
 library(tidyverse)
+library(knitr)
+library(xtable)
 ```
+
+
+
 ```{r}
 anscombe
 ```
@@ -66,3 +71,44 @@ ansc %>%
 ```
 # stage and commit method 3
 
+# visulize data
+```{r}
+ansc %>% ggplot(aes(x, y, color = dataset)) + 
+  geom_point() +
+  facet_wrap(~dataset, ncol = 2)
+
+```
+# inset iris data
+```{r}
+head(iris)
+```
+# Make a better table
+```{r}
+kable(head(iris), 
+      align= c("l", "c", "r", "c", "l"),
+      col.names = c("Sepal Length", "Sepal Width", "Sepal Length", "Sepal Width", "Species"))
+```
+# Now you try
+```{r}
+kable(head(airquality)) 
+      
+```
+```{r}
+kable(head(airquality))
+      align= c("l", "c", "r", "c", "l")
+      col.names = c("Day","Month","Temp(°F)","Wind (mph)","Solar R(lang)","Ozone (ppb)")
+```
+# insert code chunk on kable(head(chick_lm))
+```{r}
+kable(head(chicks_lm))
+```
+# What happened?
+# This shows the x values as negative for most meal types. This seems like they have lost weight
+# use x_table to summarize
+```{r}
+trees_lm <- lm(Girth ~ Height, data = trees)
+
+xtable(trees_lm) %>% kable()
+```
+# Typing Bernoulli equation
+$$constant= p+\frac{1}{2}pV^2+Pgh$$
