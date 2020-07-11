@@ -112,3 +112,5 @@ xtable(trees_lm) %>% kable()
 ```
 # Typing Bernoulli equation
 $$constant= p+\frac{1}{2}pV^2+Pgh$$
+^[Footnotes added]
+
