@@ -1,0 +1,431 @@
+---
+title: "HW04 Part 1: Complete Chapter 3"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Chapter 3
+- change "your name" in the YAML header above your name.
+
+### Section 3.1
+- Load tidyverse packages. I've entered the first code chunk for you. ** you must enter all subsequent chucks and run the code.**
+
+```{r}
+library("tidyverse")
+```
+- If you get an error, then you did not install the `tidyverse` package like you were supposed to in the previous assignment. Go back to that assignment and complete that step. (This should not be the case, though.)
+
+### Section 3.2 First Steps 
+Enter your code chunks for section 3.2 here.
+Get in the habit of entering a brief description of what each chunk of code does. Enter this above the chunk. like I did in Section 3.1.
+
+### Section 3.2.2 Creating a ggplot
+
+## A plot that shows the negative relationships between engine size and fuel effciency
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+The scatterplot shows the negative  relationship between engine size and the fuel efficiency.
+
+#### Section 3.2 Questions
+
+Answer the questions *completely.* Some answers will require you to write code in a code chunk and also to type text before or after the chunk. Other answers will require only code or only text. 
+
+**1:** Run ggplot(data = mpg). What do you see?
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+This shows the relationship between fuel efficiency with engine displacement vs highway fuel economy on a scatterplot
+
+**2:** How many rows are in `mpg`? How many columns? **Hint:** Use the `dim()` function. Type `dim()` in the console to learn what `dim()` does.
+
+## display arrangement of mpg
+```{r}
+dim(mpg)
+```
+Mpg has 234 rows and 11 columns.
+
+**3:** What does the `drv` variable describe? Read the help for `?mpg` to find out.
+
+The 'drv' variable describes the vechicles drive train. The 4=4 wheel drive, f=front wheel drive, r= rear wheel drive.
+
+**4:** Make a scatterplot of `hwy` vs `cyl`.
+## A scatterplot of 'hwy' vs 'cyl'.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = hwy, y = cyl))
+```
+This shows the relationship between fuel efficiency and cylinder size.  
+
+
+**5:** What happens if you make a scatterplot of `class` vs `drv`? Why is the plot not useful?
+
+## Scatterplot of 'class' vs 'drv'
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = class, y = drv))
+```
+
+I think a table would work better, as these variables are not functions of each other. 
+
+### section 3.3: Aesthetic mappings
+
+## Scatterplot of 'displ' vs 'hwy' with classes in different colors
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+This shows the different classes represented by different colors on a scatterplot.
+
+## scatterplot of 'displ' vs 'hwy' with classes in black and varied sized data points
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+This shows a scatterplot, similar to the one above. It shows the data points in different sizes and in black. 
+ 
+## Repeat the last plot, but 'displ' vs 'hwy' with aesthetic variable alpha for class type 
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+```
+ This shows a scatterplot with alpha aesthetic used for class
+ 
+## Make a plot with 'displ' vs 'hwy' with the shape aesthetic used for class
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+This shows different shapes being assigned to the different classes. 
+
+## Plot the 'displ' vs 'hwy' with color of data points to blue
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+The dots are not blue, but show up red. 
+
+#### Section 3.3 questions 
+
+**1:** What’s gone wrong with this code? Why are the points not blue?
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+Since the anesthetic value is inside the parentheses, ggplot makes the legend named blue, instead of making the data points blue. The aesthetic value needs to be outside of the first set of parentheses. 
+
+**2:** Which variables in `mpg` are categorical? Which variables are continuous? (*Hint:* type `?mpg` to read the documentation for the dataset). How can you see this information when you run mpg?
+```{r}
+?mpg
+```
+
+The categorical variables include: "manufacturer", "model", " trans", "drv", "fl", and "class".
+The Continuous variables include: "displ", "year", "cyl", "cty", and "hwy". 
+When you run '?mpg', it lists the name in column and describes category below each. The continuous categories are numerical. 
+
+**3:** Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables? **Note:** You need several code chunks here to answer this question.
+
+## plot 'displ' vs 'hwy' using color with continuous variable
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = year))
+```
+This shows one color with continuous data, but in different color gradients. 
+
+## plot 'displ' vs 'hwy' using color with categorical variable
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv))
+```
+
+This gives different colors to the categorical variables .
+
+## Using aesthetic size with continous variable
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = cty))
+```
+
+This shows the variables rounded to the nearest interval and in intervals of 5.
+
+## Using aesthetic shape with categorical variable
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = trans))
+```
+
+The program advises against this size, but every variable is listed as a different size. 
+
+## Using aesthetic shape with continuous variable.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = cyl))
+```
+
+There is an error when this one is plotted. It states that this "variable can not be mapped to shape".
+
+## Using aesthetic shape with categorical variable
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = manufacturer))
+```
+ This displays only 6 of the discrete values. The program states that more than 6 can be difficult to see.
+ 
+**4:** What happens if you map the same variable to multiple aesthetics?
+
+## Setting the year to color and size
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = year, size = year))
+```
+
+This plots ranges of data, represented by the blue. Shape is not continuous on here. 
+
+## Using categorical variable to size and color
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv, size = drv))
+```
+This assigns different colors and shapes to the categorical data.
+
+**5:** What does the stroke aesthetic do? What shapes does it work with? (*Hint:* use `?geom_point
+
+## Using stroke aesthetic and manual shape
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y =hwy, color = cyl, stroke = 3), shape = 13)
+```
+When using stroke, it seems to show the thickness of the data points. 
+
+**6:** What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`?
+
+## Using different variable names
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y =hwy, color = displ < 5, stroke = 1))
+```
+This plot shows two different variables. If the variable satisfies the function, it's TRUE. If it does not, than it's FALSE. 
+
+### section 3.5 Facets
+
+## Using facet wrap to show 'displ' vs 'hwy' for all classes in mpg
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+This shows the differnet facet wrap for all the classes.
+
+## Using facet grid for 'displ' vs 'hwy' with drv and cyl.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ cyl)
+```
+This facet wrap shows the relationships between displ and hwy, with drv and cyl
+
+
+#### Section 3.5 questions
+
+**1:** What happens if you facet on a continuous variable? **Note:** Write a prediction, then make and run your code chunk.
+
+I predict that they will be similar. 
+```{r}
+ggplot(data = mpg) +
+
+   geom_point(mapping = aes(x = displ, y = hwy)) +
+
+   facet_wrap(~ cty, nrow = 2)
+```
+Yes, the are similar.
+
+**2:** What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
+They show that there are no values that can be placed in these cells. There are no vehicles that are 4 wheel drive and have 5 cylinders.
+
+**3:** What plots does the following code make? What does `.` do?
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, hwy)) + 
+  facet_grid(drv ~ .)
+```
+
+The '' makes the facets with out columns. 
+
+**4:** Take the first faceted plot below. What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2)
+```
+The advantage of faceting is allows the data points to be more spread out and easier to  see. The disadvantage is that all the data are on separate graphs, so it makes is hard to see how the results relate. 
+
+**5:** Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have nrow and ncol argument?
+
+nrow: sets number of rows
+ncol: sets number of columns 
+Other option controls: scales, shrink, labeller, as.table, switch, drop, dir, and strip.positive.
+Facet grid lacks nrow and ncol, because they are determined by the different values in the data points.
+
+
+**6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
+
+Having more unqiue levels allows for the y-axis to be condensed, taking up less spave. 
+
+### Section 3.6 Geometric Objects
+
+#### Section 3.6.1 questions
+
+**1:** What geom would you use to draw a line chart? A boxplot? A histogram? An area chart? **Note:** You will have to make some types of these charts in Part 2 of this assignment.
+
+You would use geom_line to make a line graph.
+
+**2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+
+It will have lines connecting the scatter points.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+It has the data points connected with lines of best fit. The data is represent by three different colors. 
+
+**3:** What does `show.legend = FALSE` do? What happens if you remove it?
+**Note:** Skip the "Why do you think I used it earlier in the chapter?" question.
+This shows the expected values when the fill variable is discrete. 
+
+**4:** What does the `se` argument to `geom_smooth()` do?
+
+This helps prevent overplotting and lets the data be seen easier. 
+
+**5:** Will these two graphs look different? Why/why not?
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+They are the same. 
+
+**6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
+
+1: upper left.
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+
+2: upper right.
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+
+3: middle left.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+
+4: middle right.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+5: lower left.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+
+6: lower right. *Hint:* Read the help file for `geom_point`. Use `shape = 21`, `stroke = 2`, and `size = 3`.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+### Section 3.7: Statistical transformations.
+
+**Skip this section.** We may return to it later.
+
+### Section 3.8 Position adjustments
+
+
+#### Section 3.8 Questions
+
+**1:** What is the problem with this plot? How could you improve it. *Hint:* Remember the size of the `mpg` data set from earlier in this exercise. Does the number of points seem correct? **Note:** Write the code to improve it. 
+
+This plot could be improved by making the data points larger and easier to see.
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+geom_smooth(se = FALSE)
+```
+
+
+**2:** What parameters to `geom_jitter()` control the amount of jittering?
+
+The width and height can control the jittering. 
+
+**3:** Compare and contracts `geom_jitter()` with `geom_count()`.
+
+'geom_jitter' adds a small gap between data and spreads out the points. 'geom_count' counts the number of observations at each location. 
+
+**4:** What is the default position adjustement for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = year, size = year))
+geom_boxplot()
+```
+
+
+The default position is 'dodge(0)'.
+
+### Section 3.9: Coordinate systems
+
+**Note:** Read about and do only the code chunk associated with `coord_flip()`. `coord_flip()` is a great layer to use when you have categorical data with longish names as it makes the text easier to read.
+
+### Section 3.10: The layered grammar of graphics
+
+Just read this section as a contextual review of everything you just learned.
+
