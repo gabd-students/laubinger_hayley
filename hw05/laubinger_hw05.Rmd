@@ -1,0 +1,114 @@
+---
+title: "HW05 Part 2: Data Visualization"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+##LOad Tidyverse
+```{r}
+library(tidyverse)
+```
+#### Plot 1
+
+##Load dataset
+
+```{r}
+data(trees)
+```
+
+```{r}
+?trees
+```
+
+
+## Create the scatterplot
+
+```{r}
+ggplot(data = trees)+
+  geom_point(mapping = aes(x=Height, y=Girth))
+```
+
+As height increases, so does girth. As height decreases, so does girth. 
+
+#### Plot 2
+
+## Load "lynx" dataset
+
+```{r}
+data("lynx")
+```
+
+```{r}
+?lynx
+```
+
+## Make a vector called year
+```{r}
+year <- c(1821:1934)
+```
+
+## Look at class() of lynx dataset
+```{r}
+class(lynx)
+```
+
+## Convert the time series data to a vector
+
+```{r}
+pelts <- as.vector(lynx)
+```
+
+
+## Make a dataframe called "lynx_pelts"
+
+```{r}
+lynx_pelts <- data.frame(year, pelts)
+```
+
+```{r}
+ggplot(data = lynx_pelts)+
+  geom_smooth(mapping = aes(x = year, y = pelts, color= "maroon"))
+```
+
+This shows the years lynx pelts were collected and the number they were collect. Pelt collection has been on the decline since around 1920. 
+
+
+#### Plot 3
+
+## Load "iris" dataset
+
+```{r}
+data("iris")
+```
+
+```{r}
+?iris
+```
+
+## Make plot with x = petal length and y = petal width
+
+```{r}
+ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) + labs(y = "Petal Width", x = "Petal Length") + geom_point(mapping = aes(color = Species, shape = Species, point = 2))
+```
+
+This shows the three species of iris, color coated. Setosa have the smallest petal width and length, while virginica has the largest. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
