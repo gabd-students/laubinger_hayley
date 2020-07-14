@@ -186,6 +186,3 @@ ggplot(data = msleep) +
 ```
 
 This shows that herbivores have the largest brain weight, and thus are awake longer than those that have smaller brains. 
-
-
-
