@@ -13,7 +13,7 @@ library(tidyverse)
 ```
 #### Plot 1
 
-##Load dataset
+Load dataset
 
 ```{r}
 data(trees)
@@ -23,8 +23,7 @@ data(trees)
 ?trees
 ```
 
-
-## Create the scatterplot
+Create the scatterplot
 
 ```{r}
 ggplot(data = trees)+
@@ -35,7 +34,7 @@ As height increases, so does girth. As height decreases, so does girth.
 
 #### Plot 2
 
-## Load "lynx" dataset
+Load "lynx" dataset
 
 ```{r}
 data("lynx")
@@ -45,28 +44,30 @@ data("lynx")
 ?lynx
 ```
 
-## Make a vector called year
+Make a vector called year
 ```{r}
 year <- c(1821:1934)
 ```
 
-## Look at class() of lynx dataset
+Look at class() of lynx dataset
 ```{r}
 class(lynx)
 ```
 
-## Convert the time series data to a vector
+Convert the time series data to a vector
 
 ```{r}
 pelts <- as.vector(lynx)
 ```
 
 
-## Make a dataframe called "lynx_pelts"
+Make a dataframe called "lynx_pelts"
 
 ```{r}
 lynx_pelts <- data.frame(year, pelts)
 ```
+
+Make a line graph plot
 
 ```{r}
 ggplot(data = lynx_pelts)+
@@ -78,7 +79,7 @@ This shows the years lynx pelts were collected and the number they were collect.
 
 #### Plot 3
 
-## Load "iris" dataset
+Load "iris" dataset
 
 ```{r}
 data("iris")
@@ -88,7 +89,7 @@ data("iris")
 ?iris
 ```
 
-## Make plot with x = petal length and y = petal width
+Make plot with x = petal length and y = petal width
 
 ```{r}
 ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) + labs(y = "Petal Width", x = "Petal Length") + geom_point(mapping = aes(color = Species, shape = Species, point = 2))
@@ -98,17 +99,93 @@ This shows the three species of iris, color coated. Setosa have the smallest pet
 
 
 
+#### plot 4
+
+Load " msleep" dataset
+
+```{r}
+data("msleep")
+```
 
 
+```{r}
+?msleep
+```
+
+Make a violin plot of "msleep data"
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = vore, y = sleep_rem))+
+  geom_violin(fill = "gray30")
+```
 
 
+Few carnivores are able to have the highest amount of rem sleep, but the data is varied. Most animals have at least 2 hours of rem sleep. 
+
+#### Plot 5
+
+Make another Violin plot
+
+```{r}
+ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray70")
+```
+
+This shows that same data as plot 4, just in a lighter shade of gray. Violin plots allow for all data to be arranged, and shows the median ranges. 
+
+#### plot 7
+
+Using same data in plot 4 & 5 to make a boxplot
+
+```{r}
+ggplot(data = msleep) +
+  geom_boxplot(mapping = aes(x = order, y = sleep_total)) + 
+  coord_flip()
+```
+
+This data is more scattered and difficult to read with the large number of orders. There is less of a pattern to distinguish, than that of plot 4 & 5.
 
 
+#### Plot 8 
+
+Using "msleep" data to make a boxplot with points
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_boxplot() +
+  geom_point() +
+  geom_jitter() +
+  coord_flip() +
+  labs(x = 'Conservation', y = 'Awake') +
+  scale_color_discrete('Conservation')
+  
+```
+This data shows the boxplot with points, and is easier to see than the traditional boxplot in plot 7. Most are awake from 5 to 10 hours. 
 
 
+#### plot 9 
 
+Make a scatterplot of awake variables against body weight.
 
+```{r}
+ggplot(data = msleep) +
+  geom_point(mapping = aes(x = awake, y = bodywt, color = conservation)) +
+  facet_wrap(~ vore, nrow = 2)
+```
 
+The values for bodywt make it difficult to see data below 2000. Herbivores are the only ones with a body weight above 2000 and are awake over 20 hours. 
+
+#### Plot 10
+
+Make a scatterplot with awake 
+variables against brain weight.
+
+```{r}
+ggplot(data = msleep) +
+  geom_point(mapping = aes(x = awake, y = brainwt, color = vore))
+```
+
+This shows that herbivores have the largest brain weight, and thus are awake longer than those that have smaller brains. 
 
 
 
