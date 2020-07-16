@@ -1,0 +1,57 @@
+---
+title: "HW06 Part 1 : Data Importing and Wrangling "
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(ech0 = TRUE)
+```
+
+- Change "your name" in the YAML header above your name
+
+-Enter the examples in code chunks and run them
+
+## Chapter 10: Tibbles
+
+Read [R4ds Chapter 10: Tibbles](https://r4ds.had.co.nz/tibbles.html), sections 1-3.
+
+
+
+### 10.1: Intro
+
+Load tidyverse package
+```{r}
+library(tidyverse)
+```
+
+
+
+### 10.2: creating tibbles
+
+Enter code chunks and describe what each chunk does
+
+coercing datafram iris to a tibble
+
+```{r}
+as_tibble(iris)
+```
+
+This shows a tibble of iris data
+
+
+Create a new tibble from individual vectors
+
+```{r}
+tibble(
+  x = 1:5, 
+  y = 1, 
+  z = x ^ 2 + y
+  )
+```
+
+
+
