@@ -1,0 +1,239 @@
+---
+title: "HW 07: Data Importing and Wrangling I"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+Load tidyverse
+```{r}
+library(tidyverse)
+```
+
+
+## Limpets.csv
+
+
+Load the limpet data
+```{r}
+limpets_data <- read_csv(file.path(file_path, "limpets.csv"))
+```
+
+Data is tidy
+
+Use column arrangement
+```{r}
+col_types = "ncc"
+```
+
+
+Make sites factor column
+```{r}
+factor(limpets_data$Site, levels = c('PBL', 'KNRM', 'VBG', 'WP', 'PF', 'DP', 'SIO', 'CTZI', 'CTZ2', 'CNM'))
+```
+
+Boxplot of limpet data
+```{r}
+ggplot(data = limpets_data) +
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected)) +
+  labs(x = "Site", y = "Length(mm)")
+```
+ This is a boxplot of the limpet data, color coordinated by protected and unprotected. 
+ 
+ Dp and PF seem to have outliers, as they are the only two with length below 13mm in length. Sites with protection seem to have larger limpet lengths, with an average near 50 mm for the three sets of data. Those unprotected seem to have data ranging from 40 mm to 30mm, so they have smaller limpets in unprotected areas. 
+ 
+ 
+### Roseate Terns
+
+```{r}
+?read_tsv
+```
+
+
+
+Load Roseate Terns data
+```{r}
+tern_data <- read_tsv(file.path(file_path, "roseate_terns.txt"))
+```
+Data is not tidy
+
+Tidy the data
+```{r}
+tern_tidy <- tern_data %>% 
+  pivot_longer(`AR`:`JC`,
+               names_to = "Site",
+               values_to = "Population")
+```
+
+
+Remove Sites that are missing data
+```{r}
+complete_terns <- tern_data %>% filter(complete.cases(.))
+```
+
+
+Make a line plot for the data
+```{r}
+tern_tidy %>% 
+  ggplot() +
+  geom_line(mapping = aes(x = year, y = Population, color = Site)) +
+  labs(x = 'Year', y = 'Population')
+```
+Ar is the only site that had large noticeable growth since 1999. Ac and BR had the largest noticble decline in 1999. AL, BC, BL, JC, JL, and JR all fluctuated around a population around 20 to 150. 
+
+
+### Backlip Abalone
+
+#### Chunk 1: Import, remove the first column, then make a boxplot of height differences among the three types.
+
+```{r}
+abalone_data <- read_csv(file.path(file_path, "abalone.csv"))
+```
+
+```{r}
+abalone_data <- read_csv(here ("data","abalone.csv"))
+select(abalone_data,-(X1))
+ggplot(data=abalone_data)+
+  geom_boxplot(mapping=aes(x=Height,y=Type))
+```
+This boxplot shows the height vs type of abalone data.The outliers one in F and one in the M.
+
+
+#### Chunk 2: Make a scatterplot to see if height appears to correlate with rings. Rings is a measure used to estimate age. Based on the graph, are the extraordinarily large individuals really old individuals?
+
+
+```{r}
+ggplot(data = abalone_data)+
+  geom_point(mapping=aes(x=Rings, y-Height))
+```
+This shows the boxplot of rings vs height. It seems that if there are more rings, than height increases. There does not seem to be any noticeable outliers.
+
+
+#### Chunk 3: remove outliers by filtering. Make ordered factor. Remake scatterplot
+
+
+```{r}
+abalone_filtered <- filter(abalone_data, Height <= 0.4)
+factor(abalone_filtered$Type, level = 'I', 'F', 'M')
+abalone_filtered %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Rings, y = Height, color = Type))
+```
+
+Immature abalone seem to be smaller than mature. The male and female immature seems to relatively similar in size. 
+
+
+#### Chunk 4: print records and change those with 0 height to NA. replot
+
+```{r}
+abalone_filtered[abalone_filtered$Height == 0, 'Height'] <- NA
+abalone_filtered %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Rings, y = Height, color = Type))
+```
+This removed two rows of data that contained missing values. 
+
+#### Chunk 5: Make two scatterplots of your choice
+
+```{r}
+abalone_filtered %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Diameter, y = Height, color = Type))
+```
+The immature abalone have less height and diameter. As they mature, they increase in diameter and height. Gender does not seem to have an affect. 
+
+
+```{r}
+abalone_filtered %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = LongestShell, y = ShellWeight, color = Type))
+```
+The immature abalone have shorter shells, as well as less shellweight. As they become mature, shell length and weight increase. 
+
+
+### Darters
+
+#### Load the darter data. Assign names to column with width included. Make riffle an unordered factor. Make major_type an ordered factor
+
+Load the data
+```{r}
+?read_fwf
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+darters_data <- read_fwf (here("data", "darter.txt"), fwf_widths(c(3, 11, 1, 1, 1, 3, 4, 4, 4, 3, 3, 2, 2)), comment = '#')
+darters_named <- darters_data %>% rename(ID=X1,Species=X2,Riffle=X3,Age=X4,Sex=X5,Length=X6,Depth=X7,Velocity=X8,Temperature=X9,Maj_Sub=X10,Min_Sub=X11,Maj_Type=X12,Min_Type=X13)
+darters_named$Riffle <- factor(darters_named$Riffle,levels=c('1','2'))
+darters_named$Maj_Type <- factor(darters_named$Maj_Type,levels=c('s','fg','sg','lg','c'),ordered=TRUE)
+```
+
+#### Chunk 2: Use filter to remove zonale and tetrazonum. Remove min_sub and min_type. rename maj_sub and maj_type.
+
+```{r}
+darters_tidy <- darters_named %>% 
+  filter(Species=="blennioides"|Species=="caeruleum"|Species=="spectabile") %>% 
+  rename(
+    Major_Substrate = Maj_Sub,
+    Major_Type = Maj_Type) 
+select(darters_tidy,-(c(Min_Type,Min_Sub))) %>% 
+  arrange(darters_tidy,ID) %>% 
+  drop_na()
+```
+
+```{r}
+library(here)
+```
+
+
+#### Plot 1: Plot 1 Plot length as a function of depth. Map species to color and shape. What differences do you see between the two riffles?
+
+
+Plot 1
+```{r}
+darter_renamed %>%
+  ggplot() +
+  geom_point(mapping = aes(x = Depth, y = Length, Color = Species, Shape = Species)) +
+  facet_wrap(~ Riffle, rnow = 1)
+```
+The first riffle has greater depth, while the second has greater length. 
+
+
+Plot 2
+```{r}
+ggplot(data=darters_tidy)+
+  geom_boxplot(mapping=aes(x=Species, y=Length))+
+  facet_wrap(~Riffle,ncol=2)
+```
+Riffle 2 has more outliers, with most being above the median by a length of 2, compared to riffle 1, which only has one oultier.
+
+
+```{r}
+ggplot(data=darters_tidy)+
+  geom_boxplot(mapping=aes(x=major_substrate,y=Length))+
+  facet_grid(Species~Riffle)
+```
+
+
+```{r}
+ggplot(data=darters_tidy)+
+  geom_boxplot(mapping=aes(x=Major_Substrate,y=Length))+
+  facet_grid(Riffle~Species)
+```
+
+This has created a better comparison of the data. There are still more outliers in Riffle 2, but you can interpret the data easier. 
+
+
+#### Finished 
+
+
+
+
+
