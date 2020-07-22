@@ -10,15 +10,15 @@ std_err <- function(vector, na.rm = FALSE) {
   ifelse (na.rm,
           vector <- na.omit(vector),
           vector)
-  (stdev(vector)/ sqrt(length(vector)))
+  sd(vector)/ sqrt(length(vector))
 }
 
 ### Function 2: Scaled Mass index function
 ## Make index scale of mass of bird to length of tarsus
 ## Use 'mass' for mass, 'tarsus' for tarsus length, and 'slope' for slope
 ## default each argument to zero
-  scaled_mass <- function(mass = 0, tarsus = 0, slope = 0) {mass*((mean(tarus))/tarus)^slope}
-mass*(((mean(tarus))/tarsus)^slope)
+  scaled_mass <- function(mass = 0, tarsus = 0, slope = 0) {mass*((mean(tarsus))/tarsus)^slope}
+mass*(((mean(tarsus))/tarsus)^slope)
 ## Scale data for mass and tarsus
 scaled_mass (mass <- c(26.7, 22.8, 25.7, 26.1, 23.9))
 
