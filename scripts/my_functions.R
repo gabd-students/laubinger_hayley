@@ -1,3 +1,5 @@
+## Hayley Laubinger
+##hw08: functions
 
 ### Function 1: Standard error function
 ## First argument will accept vector of numeric values
