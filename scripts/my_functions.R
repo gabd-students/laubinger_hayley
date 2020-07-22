@@ -11,25 +11,21 @@ std_err <- function(vector, na.rm = FALSE) {
   (stdev(vector)/ sqrt(length(vector)))
 }
 
-# data can be entered in Y, sqrt(length(Y)) to test the range of cells that contain the data
 
 ### Function 2: Scaled Mass index function
 ## Make index scale of mass of bird to length of tarsus
 ## Use 'mass' for mass, 'tarsus' for tarsus length, and 'slope' for slope
 ## default each argument to zero
-scaled_mass <- function(values, na.rm = FALSE) 
-  ifelse (mass>= 0, 
-          mass <- mass,
-          mass <- 0)
-  ifelse( tarsus >= 0,
-          tarsus <- tarsus,
-          tarsus <-0)
-  ifelse (slope >=0,
-          slope <- slope, 
-          slope <-0)
-## Make R aware of scaled_mass
   scaled_mass <- function(mass = 0, tarsus = 0, slope = 0) {mass*((mean(tarus))/tarus)^slope}
+mass*(((mean(tarus))/tarsus)^slope)
+## Scale data for mass and tarsus
+scaled_mass (mass <- c(26.7, 22.8, 25.7, 26.1, 23.9))
 
-  
-# No errors have occurred in the console. Mass, tarsus, and slope set to 0.
+scaled_mass (tarsus <- c(18.4, 17.5, 18.4, 18.0, 18.2))
+
+## Use Slope = 1.5
+scaled_mass (slope=1.5)
+# No errors have occurred in the console.Mass, tarsus, and slope set to 0.
+
+
   
