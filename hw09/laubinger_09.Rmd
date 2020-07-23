@@ -33,7 +33,7 @@ library(knitr)
 
 ## Use Rsource to load functions
 ```{r}
-source(here('scripts', 'my_functions.R'))
+my_functions <-(here('scripts', 'my_functions.R'))
 ```
 
 ### Darters in riffles
