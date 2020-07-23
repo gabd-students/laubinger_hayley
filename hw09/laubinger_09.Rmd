@@ -57,7 +57,8 @@ Only total_substrate needs a new column.
 
 ```{r}
 wrangled_darters <- darters_data %>% 
-  mutate(sex = ifelse(sex == "f",                              "female", 
+  mutate(sex = ifelse(sex == "f",                              
+                             "female", 
                              "male"),
          total_substrate = majsub + minsub,
          length = length * 10,
@@ -113,19 +114,60 @@ wrangled_darters %>%
              shape = 15,
              color = "yellow") +
   facet_wrap(~ riffle) +
-  coord_flip() +
-  labs(y = "Length(in mm)", x = NULL)
+  labs(y = "Length(in mm)", x = NULL)+
+  coord_flip()
 ```
-Spectabile seems to have the largest range, from around 320 mm to 355mm, while biennioides seems to have the smallest, with around 350mm to 355mm. 
+Spectabile seems to have the largest range, from around 320 mm to 355mm, while biennioides seems to have the smallest, with around 350mm to 360mm.Specie biennioides has the largest size in fish in riffle 2, near 360mm.In spectabile and caeruleum, they have the larger sized fish in riffle 1. 
 
 ## Plot 2
+Make a new plot with a geom_point() layer of the length variable for each species. Change the point color to a lighter shade in the range of gray50 to gray70. Add a stat_summary() layer. Add another stat_summary(). Change the y function to mean, size to 3, and add the color = "maroon" argument.Facet, label, and flip the graph as you did above.
+
+```{r}
+wrangled_darters %>%
+   filter(!is.na(length)) %>%
+  ggplot(mapping = aes(x = species, y = length)) +
+  geom_point(color = "gray55") +
+  stat_summary(fun.y = median,
+               geom = "point",
+               size = 2.2) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+                size = 3,
+                color = "maroon") +
+  facet_wrap(~ riffle) +
+  labs(y = "Length(in mm)", x = NULL)+
+  coord_flip()
+```
+Changing the mean to size 3 and maroon, allows for it to be more easily seen , compared to the other data points that are grey55 and size 2.2. This lets the data for riffle 1 and 2 to be more easily seen for the mean over median. 
 
 
 
+### Stress and corticosterones in birds
 
+## Load libraries 
+```{r}
+library(tidyverse)
+```
+```{r}
+library(smatr)
+```
 
+## import data file
 
+```{r}
+feathers_data <- read_csv(here("data", "feathers.csv"))
+```
 
+## use 'locale' argument to specifiy decimal mark 
+
+```{r}
+?locale
+```
+```{r}
+locale(feathers_data = "en", read.csv,
+  decimal_mark = ".", grouping_mark = ",", tz = "UTC",
+  encoding = "UTF-8", asciify = FALSE)
+```
 
 
 
