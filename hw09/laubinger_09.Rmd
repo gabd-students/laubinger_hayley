@@ -1,0 +1,156 @@
+---
+title: "HW09: Wrangling II"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Load all the packages 
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+library(here)
+```
+
+```{r}
+library(smatr)
+```
+
+```{r}
+library(knitr)
+```
+
+
+## Use Rsource to load functions
+```{r}
+my_functions <- source(here('scripts', 'my_functions.R'))
+```
+
+### Darters in riffles
+
+## import data
+Read in darters.csv. These are the same data as an earlier assignment but in csv format.
+Use filter() to remove tetrazonum and zonale.
+Do not delete the minsub column like you did in the previous assignment.
+
+```{r}
+darters_data <- read_csv(here("data", "darters.csv"))
+darters_data <- filter(darters_data, species != "tetrazonum" & species != "zonale")
+darters_data
+```
+This code chunk imports the data from darters.csv found in the data folder
+
+
+## Wrangle Data
+Use mutate() to perform these wrangling tasks 
+Only total_substrate needs a new column.
+
+```{r}
+wrangled_darters <- darters_data %>% 
+  mutate(sex = ifelse(sex == "f",                              "female", 
+                             "male"),
+         total_substrate = majsub + minsub,
+         length = length * 10,
+         riffle = ifelse(riffle == "1",
+                         "riffle 1",
+                         "riffle 2"))
+wrangled_darters
+```
+This code chunk has summed  together the majsub and minsub into a new column called total_substrate, changed riffle values 1 and 2 into Riffle 1 and Riffle 2, changed length from centimeter to millimeter, and sex from f to female and m to male.
+
+## Does total_substrate sum to 1 for all observations?
+
+```{r}
+wrangled_darters$total_substrate == 1
+```
+All are true for equaling 1. 
+
+
+## Summarize Data
+Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle and use facet_wrap on riffle
+
+```{r}
+(darters_summary <- wrangled_darters %>%
+  group_by(riffle, species) %>%
+  summarise(length = mean(length, na.rm = TRUE),
+            depth = mean(depth, na.rm = TRUE),
+            velocity = mean(velocity, na.rm = TRUE)))
+```
+
+## Use kable to make a table with summary means
+```{r}
+kable(darters_summary)
+```
+ This gives a summary of the length, depth, and velocity of species. 
+ 
+## Graph data
+
+## Plot 1 
+Make a plot that uses the stat_summary() technique and use x = species and y = length.
+
+```{r}
+wrangled_darters %>%
+   filter(!is.na(length)) %>%
+  ggplot(mapping = aes(x = species, y = length)) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+    ) +
+   geom_point(data = darters_summary,
+             mapping = aes(x = species,
+                           y = length),
+             shape = 15,
+             color = "yellow") +
+  facet_wrap(~ riffle) +
+  coord_flip() +
+  labs(y = "Length(in mm)", x = NULL)
+```
+Spectabile seems to have the largest range, from around 320 mm to 355mm, while biennioides seems to have the smallest, with around 350mm to 355mm. 
+
+## Plot 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
