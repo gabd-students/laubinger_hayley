@@ -155,19 +155,64 @@ library(smatr)
 ## import data file
 
 ```{r}
-feathers_data <- read_csv(here("data", "feathers.csv"))
-```
-
-## use 'locale' argument to specifiy decimal mark 
-
-```{r}
 ?locale
 ```
+
 ```{r}
-locale(feathers_data = "en", read.csv,
-  decimal_mark = ".", grouping_mark = ",", tz = "UTC",
-  encoding = "UTF-8", asciify = FALSE)
+ feathers_data <- read_csv(here("data","feathers.csv"),locale = locale(decimal_mark = ",")) %>% 
+  rename(capture_date="Capture Date",day=Date,site=Site,urban_score="Urba Score",cortF="CortF ng/mg",cortB="CortF ng/mm", sex=Sex,smi=SMI,tarsus=Tarsus,mass=Mass,basal_cort=Bas_Cort,stress_cort=Stress_Cort)
+feathers_data
 ```
+The code chunk imported the data, changed the decimal_marks to "," , searched the locale help, and changed column names including spaces and units of measurement. 
+
+## Wrangle Data
+#Calculate the mean tarsus length of all individuals in the data set, and store it in a variable called mean_tarsus.
+
+```{r}
+mean_tarsus <- mean(tarsus,na.rm = TRUE)
+mean_tarsus
+```
+
+#Use mutate() to log-transform (log()) the body mass (mass) and the tarsus length (tarsus)
+
+```{r}
+mut_feathers <- mutate(feathers_data, log_mass=log(mass),log_tarsus=log(tarsus))
+mut_feathers
+```
+
+# Run major_axis <- sma(log_mass ~ log_tarsus, data = <data>). Substitute the name of your imported data for <data>
+```{r}
+major_axis <- sma (log_mass ~ log_tarsus, data=mut_feathers)
+```
+
+# Apply the summary() function to major_axis
+
+```{r}
+major_axis <- sma (log_mass ~ log_tarsus, data=mut_feathers)
+summary(major_axis)
+```
+# Apply the coef() function to major_axis. 
+```{r}
+coef(major_axis)
+major_axis_coef <- coef(major_axis)
+```
+
+# Store value in varibale 'b'. 
+```{r}
+b <- major_axis_coef['slope']
+b
+```
+A slope of 1.864 is saved for 'b'.
+
+
+
+
+
+
+
+
+
+
 
 
 
