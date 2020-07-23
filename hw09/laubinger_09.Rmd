@@ -33,7 +33,7 @@ library(knitr)
 
 ## Use Rsource to load functions
 ```{r}
-my_functions <- source(here('scripts', 'my_functions.R'))
+source(here('scripts', 'my_functions.R'))
 ```
 
 ### Darters in riffles
@@ -204,12 +204,60 @@ b
 ```
 A slope of 1.864 is saved for 'b'.
 
+# Use mutate and scaled_mass function to calculate SMI in new column called new_smi
+```{r}
+smi_mut_feathers <- mutate(mut_feathers,new_smi=scaled_mass(mass,tarsus,b))  
+smi_mut_feathers
+```
+
+# Compare your new column with the column you imported
+
+```{r}
+select(smi_mut_feathers,smi,new_smi)
+```
+They are nearly identical, off by around .01 on some. 
+
+## Summarize data
+#group by site and use summarize() to calculate mean and std_err of mean.
+```{r}
+sum_feathers <- group_by(smi_mut_feathers,site)
+feathers_sum <- summarise(sum_feathers,
+                          basal_mean =  mean(basal_cort,na.rm=TRUE),
+    stress_mean = mean(stress_cort,na.rm=TRUE),
+    std_err_basal=std_err(basal_cort,na.rm=TRUE),
+    std_err_cort=std_err(stress_cort,na.rm=TRUE),
+    .groups='drop')
+feathers_sum
+```
+This has created columns for basal_mean, stress_mean, std_err_basal, and std_err_cort.
+
+## Graph data
+#Plot 1: make a box plot of new_smi for each site. 
+```{r}
+ggplot(data=smi_mut_feathers)+
+  geom_boxplot(mapping=aes(x=site,y=new_smi))
+```
+All sites have similar medians, around 25, except villefollet which has a median new 23. As for range, NIORT has the largest range by far.
+
+# Plot 2: A common graph is to plot the means with error bars based on the standard errors of the means.Make a plot of basal cortiocosterone concetration for each site. 
+
+```{r}
+ggplot(data=feathers_sum)+
+  geom_point(mapping = aes(x=site,y=std_err_basal))+
+  geom_errorbar(mapping=aes(x=site,ymin=std_err_basal-1,ymax=std_err_basal+1))
+```
+This shows the standard error of the basal concentration. CEBC and VILLEFOLLET are simialar, around 0.4, while LAROCHELLE is at 0.5 and NIORT is near 0.7.
+
+# Plot 3: 
+```{r}
+ggplot(data=feathers_sum)+
+  geom_point(mapping=aes(x=site,y=std_err_cort))+
+  geom_linerange(mapping = aes(x=site,ymin=std_err_cort-1,ymax=std_err_cort+1))
+```
+This code chunk removes the horizontal default error lines, removing the tiefighter look of the previous plot. 
 
 
-
-
-
-
+#### Vóila
 
 
 
