@@ -1,0 +1,177 @@
+---
+title: "HW 11: Data Visualization 1 cont"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+Load libraries
+```{r}
+library(tidyverse)
+library(here)
+library(GGally)
+library(patchwork)
+```
+
+### Habitat parameters for Aegla crabs
+
+## Data exploration: crabs
+
+#### Import the raw data from aegla_crabs.csv
+```{r}
+crabs_raw <- read_csv(here("data","aegla_crabs.csv"))
+(crabs_raw)
+```
+Aegla crab data is loaded 
+
+#### View crabs_raw
+```{r}
+view(crabs_raw)
+```
+
+
+#### Use select() to remove the Site, AT, WT, Crab, Shrimp, Aeglam, AeglaFe, AeglaFo columns, Use drop_na() to remove the one row with missing water quality data, Create a row_order dummy variable like we did for the sparrows.
+
+```{r}
+crabs_data <- crabs_raw %>% 
+  select(!c("Site","AT","WT","Crab","Shrimp","Aeglam","AeglaFe","AeglaFo")) %>% 
+  drop_na() %>% 
+  mutate(row_order = 1:nrow(.))
+crabs_data
+```
+We lost one column, from 56 to 55. 
+
+#### view dataset
+```{r}
+view(crabs_data)
+```
+
+Width, Ph,TDS, and Cond seem to have outliers, with numbers above 2 and have the most variation in data, while most columns are under 1 and have fairly unifrom data.   
+
+#### Chose 4 values to make Cleveland plots
+```{r}
+p_Width <- crabs_data %>% 
+  ggplot(aes(y=row_order))+
+  geom_point(aes(x=Width))+
+  theme(axis.title.y=element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_pH <- crabs_data %>% 
+  ggplot(aes(y=row_order))+
+  geom_point(aes(x=pH))+
+  theme(axis.title.y=element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_TDS <- crabs_data %>% 
+  ggplot(aes(y=row_order))+
+  geom_point(aes(x=TDS))+
+  theme(axis.title.y=element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Cond <- crabs_data %>% 
+  ggplot(aes(y=row_order))+
+  geom_point(aes(x=Cond))+
+  theme(axis.title.y=element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+
+#### Make 2x2 frid with the four plots
+```{r}
+p_Width+p_pH+p_Cond+p_TDS
+```
+These four were picked, because they had numbers greater than 2 and were not consistent with data, when most of the columns have values less than 1 and relatively consistent data. TDS could becomes an issue with outliers, because it could affect the amount of solids that get dissolved into the water. pH could also have an affect, as varying pH can lead to more acidic or basic water, and this can make it difficult to survive. 
+
+#### Choose three different variables to make histograms
+
+```{r}
+depth_h1 <- crabs_data %>% 
+  ggplot()+
+  geom_histogram(aes(x=Depth),
+                 binwidth = 0.5,
+                 boundary=0,
+                 closed="right",
+                 color="black")
+depth_h1
+```
+This histogram shows the Depth column of the crab data. It seeems to have an outlier around 4.5 
+
+```{r}
+flow_h1 <- crabs_data %>% 
+  ggplot()+
+  geom_histogram(aes(x=Flow),
+                 binwidth = 0.15,
+                 boundary=0,
+                 closed="right",
+                 color="black")
+flow_h1
+```
+The flow histogram is difficult to read compared to the depth. It only has 3 data columns. 
+
+```{r}
+pH_h1 <- crabs_data %>% 
+  ggplot()+
+  geom_histogram(aes(x=pH),
+                 binwidth = 0.15,
+                 boundary=0,
+                 closed="right",
+                 color="black")
+pH_h1
+```
+pH has an outlier near pH of 6.5 and begins to decrease in pH levels around a pH of 7.25.
+
+
+#### Density Plots
+
+```{r}
+d_Depth<- crabs_data %>%
+  ggplot(aes(x = Depth)) +
+  geom_density()
+d_Depth
+```
+Depth seems to hit a peak density of 0.75 and a depth of 1, then it decreases to about 0 around a depth of 3. 
+
+```{r}
+d_Flow<- crabs_data %>%
+  ggplot(aes(x = Flow)) +
+  geom_density()
+d_Flow
+```
+Flow hits a peak at a density of 8, with a flow of 0.4. Below a flow of 0.4, the density waves between 1 and 0. 
+
+```{r}
+d_pH<- crabs_data %>%
+  ggplot(aes(x = pH)) +
+  geom_density()
+d_pH
+```
+pH of 7 has the highest density, with 2.0. Once you decrease in pH, density drops dramatically, probably due to the fact that its difficult for the crabs to survive i water below pH of 7. 
+
+
+#### Use `patchwork to produce a 2 column matrix with the histograms in the left column and the corresponding density plots in the right column.
+
+```{r}
+depth_h1+flow_h1+pH_h1+d_Depth+d_Flow+d_pH
+```
+This allows you to compare the 6 graphs together in one area. It makes it easier to compare this way, than having to go back and forth to compare the graphs that were created. 
+
+
+#### Use ggpairs to explore relationships amoung variables
+```{r}
+crabs_data %>% ggpairs()
+```
+This allows you to view all the data and compare. It is difficult to interpret this data, as it is slight crowded with data and graphs. 
+
+#### Finished :)
