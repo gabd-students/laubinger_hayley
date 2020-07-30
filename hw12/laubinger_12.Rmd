@@ -298,12 +298,12 @@ Adding %in% allowed for rows to be created, when prior I had 0 rows created. yea
 #### Plot data
 ```{r}
 ggplot(data=thebes_summarized_data)+
-  geom_line(mapping=aes(x=Month,y=mean_discharge,group=year),color="grey70",size=0.3)+
-  geom_line(thebes_event,mapping = aes(Month,mean_discharge,group=year,Event="mean_distribution"))+
+ geom_line(mapping=aes(x=Month,y=mean_discharge,group=year),color="grey70",size=0.3)+
+  geom_line(thebes_event,mapping = aes(Month,mean_discharge,group=year,color="Event"))+
 labs(x=NULL,
      y="Discharge(cf/s,thousands)")
 ```
-The graph looks similar to the notes, but lacks the event key, with each event in separate colors. 
+The graph looks similar to the notes, but lacks the event key, with each event in separate colors. I am having issues having the key labeled "Events" and having the correct events in the key. 
 
 
-
+#### The End
