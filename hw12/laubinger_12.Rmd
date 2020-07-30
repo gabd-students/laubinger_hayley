@@ -1,0 +1,119 @@
+---
+title: "HW 12: Dates"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Load the tidyverse, here and lubridate libraries
+```{r}
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+## Part 1: Play Date
+
+```{r}
+birth_date <- "11/25/1998"
+
+# Elizabeth Garret Anderson was the first female physician
+anderson <- "9 June 1836"
+
+# Mary Anning discovered the first complete Plesiosaur fossil, 
+# and other important Jurassic fossils
+anning <-  "1799/05/21"
+
+# Alice Augusta Ball was a chemist who developed the
+# first injectable treatment for leprosy.
+ball <- "July 24, 1892"
+
+# Sylvia Earle was the first chieft scientist at NOAA
+earle <- "August, 30 (1935)"
+
+# Rosalind Franklin used x-ray diffraction to 
+# discover DNA structure. Watson and Crick claimed credit.
+franklin <- "25th of July, 1920"
+
+# Ester Lederberg was the first to discover that viruses 
+# infect bacteria. Led to discovery of lambda bacteriophage
+lederberg <- "December 18, 1922"
+
+# Barbara McClintock discovered transposable elements (jumping genes),
+# and developed staining techniques to study chromosomes
+mcclintock <- "16061902"
+
+# Let's also remember a dream
+mlk_birth <- "1/15/1929"
+mlk_dream <- "1963 August 28"
+```
+
+#### Answer the following questions using code chunks
+
+1. Convert each date to POSIXct format, using lubridate functions, saving each to a unique variable. Print each result.
+
+```{r}
+birth_date <- mdy(birth_date)
+birth_date
+
+anderson_birth_date <- dmy(anderson)
+anderson_birth_date
+
+anning_birth_date <- ymd(anning)
+anning_birth_date
+
+ball_birth_date <- mdy(ball)
+ball_birth_date
+
+earle_birth_date <- mdy(earle)
+earle_birth_date
+
+franklin_birth_date <- dmy(franklin)
+franklin_birth_date
+
+lederberg_birth_date <- mdy(lederberg)
+lederberg_birth_date
+
+mcclintock_birth_date <- dmy (mcclintock)
+mcclintock_birth_date
+
+mlk_birth_date <- mdy(mlk_birth)
+mlk_birth_date
+
+mlk_dream_date <-ymd(mlk_dream)
+mlk_dream_date
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
