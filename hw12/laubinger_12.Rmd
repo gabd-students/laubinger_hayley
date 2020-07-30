@@ -85,17 +85,100 @@ mlk_birth_date
 mlk_dream_date <-ymd(mlk_dream)
 mlk_dream_date
 ```
+2. Check yours dates to be sure they are correct. If you spot any errors, correct them now using the proper lubridate function(s).
+-All dates check out
+
+3. What day of the week were you born on? Show the full day name, not the abbreviated name or the day number.
+
+```{r}
+wday(birth_date, label = TRUE, abbr = FALSE)
+```
+I was born on a Wednesday. 
+
+4. What day of the week will your birthday be on this year? Use lubridate’s update function. You must figure out how to do it entirely by code for full points (no hard-coding). In other words, you code should work just as well next year or five years in the future, without editing.
+
+```{r}
+update(birth_date, year = 2020) %>% 
+  weekdays(abbreviate = FALSE)
+```
+My birthday will be on a Wednesday again. 
 
 
+5. What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
+
+```{r}
+age <- dmy(25112525) - birth_date
+as.duration(age)
+update(birth_date, year = 2525) %>%
+  weekdays(abbreviate = TRUE)
+```
+In the year 2525, I would be 527 years old, and my birthday would be on a Sunday. Given that humans still inhabit the earth. 
 
 
+6. How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
+
+```{r}
+ball <- ball_birth_date - anderson_birth_date
+print(ball)
+```
+There are 20,499 days between their birth.
 
 
+7. What is the duration between Martin Luther King Jr.’s birth date and his I Had a Dream speech.
+
+```{r}
+mlk_dream_date - mlk_birth_date
+```
+There is a difference of 57,526 days.
 
 
+8. Enter the eight POSIXct compatible birth dates, including your own, into a vector in the order they are given above. Name each element of the vector with the last name of each person. 
+
+```{r}
+dates <- c(birth_date, anderson_birth_date, anning_birth_date, ball_birth_date, earle_birth_date, lederberg_birth_date, mcclintock_birth_date, franklin_birth_date, mlk_birth_date)
+names(dates) <- c('Laubinger','Anderson', 'Anning', 'Ball', 'Earle', 'Lederberg', 'McClintock', 'Franklin', 'King')
+leap_year(dates)
+difference <- dates - birth_date
+print (print(difference))
+```
 
 
+I think this is correct. I am listed last, with 0 days. 
 
+
+## Part 2: Wrangling and plotting with dates
+
+### import lake_ice.csv 
+```{r}
+lake_ice_data <- read_csv(here::here("data", "lake_ice.csv"),na="-999") %>%
+ na.omit()
+lake_ice_data
+```
+
+### Filter data to save only Lake Mendota
+```{r}
+lake_mendota_data <- filter(lake_ice_data, lakename == "LAKE MENDOTA")
+```
+
+
+### Select these six columns. You can do this in one of a few different ways but you should be able to do this very efficiently
+```{r}
+lake_mendota_data_tidy <- select(lake_mendota_data, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>%
+  mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day) ,ice_off = make_date(iceoff_year, iceoff_month, iceoff_day), duration_days = as.numeric(ice_off-ice_on))
+```
+
+```{r}
+lake_mendota_data_tidy
+```
+
+
+### Make a line graph to show how duration changed over iceoff_year
+
+```{r}
+ggplot(data = lake_mendota_data_tidy)+
+  geom_line(mapping = aes(x=iceoff_year, y=duration_days))+xlab("Year")+ylab("Duration of Ice(Days)")
+```
+I think this is correct. It matches the graph in the assignment. 
 
 
 
