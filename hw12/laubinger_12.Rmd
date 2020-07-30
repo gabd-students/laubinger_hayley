@@ -242,59 +242,68 @@ Again, the data matches that of the assignment.
 
 ### Mississippi River Discharge
 
-#### Import and tidy data,dividing the discharge by 1000 to improve interpretation of the y-axis.Group by year and month, and summmarize mean discharge. 
+#### Import and tidy data
 
 ```{r}
-thebes_data <- read_csv(here("data", "thebes_discharge.csv"))
-thebes_data_tidy <- pivot_longer(thebes_data,"1988":"2018",names_to="year", values_to= "Discharge") %>%
-mutate(Discharge=Discharge/1000)
+thebes_data <- read_csv(here('data', 'thebes_discharge.csv'))
+thebes_data
+thebes_data_tidy<- thebes_data %>% 
+  pivot_longer(c('1988':'2018'), names_to = 'year', values_to = 'discharge')
 thebes_data_tidy
-thebes_grouped_data <- thebes_data_tidy %>%
-  group_by(year,Month)
-thebes_grouped_data 
-thebes_summarized_data <- thebes_grouped_data %>%
-  summarise(
-    mean_discharge=mean("Discharge")
+```
+
+#### dividing the discharge by 1000 to improve interpretation of the y-axis
+
+```{r}
+thebes_divided_discharge <- thebes_data_tidy %>% 
+  mutate(discharge = discharge / 1000)
+thebes_divided_discharge
+```
+Adding thebes_divided_discharge, allowed for the discharge column data to be shown. Mistakes caused no data to be in that column.
+
+
+#### Group by year and month, and summmarize mean discharge. Add an Event column using mutate and case_when.
+
+```{r}
+thebes_grouped_data <- thebes_divided_discharge %>% 
+  group_by(year, Month)
+thebes_grouped_data
+thebes_summarized_data <-thebes_grouped_data %>% 
+  summarize(
+    mean_discharge = mean(discharge)
   )
 thebes_summarized_data
-```
-
-#### Add an Event column using mutate and case_when.
-```{r}
-thebes_events <- thebes_summarized_data %>%
+river_event <- thebes_summarized_data %>% 
   mutate(
-    event = case_when(year==1993 | year == 2011 ~ 'Flood',
-                      year== 1988 | year == 2012 ~ 'Drought',
-    TRUE ~ 'Normal'                  
+    event = case_when(
+      year == 1993 | year == 2011 ~ 'Flood',
+      year == 1988 | year == 2012 ~ 'Drought',
+      TRUE ~ 'Normal'
     )
   )
-thebes_events
+thebes_event
 ```
-This has arranged the year and months, stating which event occured during that time. 
+Finally was able to get mean_discharge data to show. Had to break code apart to view mistakes. 
 
-#### Make a second data set
 
+#### Make second data set
 ```{r}
-thebes_events <- thebes_summarized_data %>% 
-  filter(year == 1988, year == 1993, year == 2011, year == 2012)
-thebes_events
+thebes_event <- thebes_summarized_data %>% 
+  filter(year%in%c(1988,1993, 2011, 2012))
+thebes_event
 ```
-
+Adding %in% allowed for rows to be created, when prior I had 0 rows created. year== adds error, so remove and add year in front of %in%.
 
 
 #### Plot data
-
 ```{r}
-
+ggplot(data=thebes_summarized_data)+
+  geom_line(mapping=aes(x=Month,y=mean_discharge,group=year),color="grey70",size=0.3)+
+  geom_line(thebes_event,mapping = aes(Month,mean_discharge,group=year,Event="mean_distribution"))+
+labs(x=NULL,
+     y="Discharge(cf/s,thousands)")
 ```
-
-
-
-
-
-
-
-
+The graph looks similar to the notes, but lacks the event key, with each event in separate colors. 
 
 
 
