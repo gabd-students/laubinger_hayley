@@ -148,20 +148,20 @@ I think this is correct. I am listed last, with 0 days.
 
 ## Part 2: Wrangling and plotting with dates
 
-### import lake_ice.csv 
+#### import lake_ice.csv 
 ```{r}
 lake_ice_data <- read_csv(here::here("data", "lake_ice.csv"),na="-999") %>%
  na.omit()
 lake_ice_data
 ```
 
-### Filter data to save only Lake Mendota
+#### Filter data to save only Lake Mendota
 ```{r}
 lake_mendota_data <- filter(lake_ice_data, lakename == "LAKE MENDOTA")
 ```
 
 
-### Select these six columns. You can do this in one of a few different ways but you should be able to do this very efficiently
+#### Select these six columns. You can do this in one of a few different ways but you should be able to do this very efficiently
 ```{r}
 lake_mendota_data_tidy <- select(lake_mendota_data, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>%
   mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day) ,ice_off = make_date(iceoff_year, iceoff_month, iceoff_day), duration_days = as.numeric(ice_off-ice_on))
@@ -172,23 +172,121 @@ lake_mendota_data_tidy
 ```
 
 
-### Make a line graph to show how duration changed over iceoff_year
+#### Make a line graph to show how duration changed over iceoff_year
 
 ```{r}
 ggplot(data = lake_mendota_data_tidy)+
-  geom_line(mapping = aes(x=iceoff_year, y=duration_days))+xlab("Year")+ylab("Duration of Ice(Days)")
+  geom_line(mapping = aes(x=iceoff_year, y=duration_days))+xlab("Year")+ylab("Ice Duration (Days)")
 ```
 I think this is correct. It matches the graph in the assignment. 
 
 
+### Soil Carbon Dioxide
+
+#### Import Soil_co2.txt
+
+```{r}
+soil_data <- read_tsv(here('data', 'soil_co2.txt'))
+```
+```{r}
+soil_data
+```
+Appears to be imported correctly 
+
+#### Establish a POSIXct-compatible date variable for 01 January 2006.
+
+```{r}
+soil_date <- dmy('01 January 2006')
+```
+
+```{r}
+soil_date
+```
+
+
+#### Rename the columns so that they are syntactic.Make a Date column that adds the day of CO2 measurement to the 01 Jan 2006 reference date.Create a Year column, create a month column, group data by year and month.Summarize mean CO2 and standard error of the mean.
+
+```{r}
+soil_co2_data <- soil_data %>% 
+  rename("Day" = "DayN[]", "Date_code" = "Datecode[]",  "Min" = "Min[]", "Veg" = "Veg[]", "Plot" = "Plot[]", "Group" = "Group[]", "Corr_CO2" = "CorrCO2[]", "Soil_T" =  "SoilT[]") %>% 
+  mutate(Date=soil_date+Day,
+         Year=year(Date),
+         Month=month(Date,label=TRUE))
+soil_co2_data
+soil_data_grouped <- group_by (soil_co2_data, Year,Month)
+soil_data_summarized <- summarise( soil_data_grouped,meanCO2=mean(Corr_CO2,na.rm = TRUE),std_err_CO2=std_err(Corr_CO2,na.rm=TRUE),.groups = 'drop')
+soil_data_summarized
+```
+
+
+#### Make a column chart of mean CO2 for each month.
+```{r}
+ggplot(data=soil_data_summarized)+
+   geom_col(mapping=aes(x=Month,y=meanCO2))+
+  geom_linerange(aes(x=Month,ymin=meanCO2-std_err_CO2,ymax=meanCO2+std_err_CO2))+
+facet_wrap(~Year)
+```
+This seems to match the graphs on the assignment.They are the correct height and appropriate axis labels. 
+
+
+#### Make the same plot but use points instead of columns, and use only geom_linerange
+```{r}
+  ggplot(data=soil_data_summarized)+
+   geom_point(mapping=aes(x=Month,y=meanCO2))+
+  geom_linerange(aes(x=Month,ymin=meanCO2-std_err_CO2,ymax=meanCO2+std_err_CO2))+
+facet_wrap(~Year)
+```
+Again, the data matches that of the assignment. 
 
 
 
+### Mississippi River Discharge
+
+#### Import and tidy data,dividing the discharge by 1000 to improve interpretation of the y-axis.Group by year and month, and summmarize mean discharge. 
+
+```{r}
+thebes_data <- read_csv(here("data", "thebes_discharge.csv"))
+thebes_data_tidy <- pivot_longer(thebes_data,"1988":"2018",names_to="year", values_to= "Discharge") %>%
+mutate(Discharge=Discharge/1000)
+thebes_data_tidy
+thebes_grouped_data <- thebes_data_tidy %>%
+  group_by(year,Month)
+thebes_grouped_data 
+thebes_summarized_data <- thebes_grouped_data %>%
+  summarise(
+    mean_discharge=mean("Discharge")
+  )
+thebes_summarized_data
+```
+
+#### Add an Event column using mutate and case_when.
+```{r}
+thebes_events <- thebes_summarized_data %>%
+  mutate(
+    event = case_when(year==1993 | year == 2011 ~ 'Flood',
+                      year== 1988 | year == 2012 ~ 'Drought',
+    TRUE ~ 'Normal'                  
+    )
+  )
+thebes_events
+```
+This has arranged the year and months, stating which event occured during that time. 
+
+#### Make a second data set
+
+```{r}
+thebes_events <- thebes_summarized_data %>% 
+  filter(year == 1988, year == 1993, year == 2011, year == 2012)
+thebes_events
+```
 
 
 
+#### Plot data
 
+```{r}
 
+```
 
 
 
