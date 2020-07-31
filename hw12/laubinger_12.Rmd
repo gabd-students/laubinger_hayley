@@ -273,17 +273,19 @@ thebes_summarized_data <-thebes_grouped_data %>%
     mean_discharge = mean(discharge)
   )
 thebes_summarized_data
-river_event <- thebes_summarized_data %>% 
-  mutate(
+thebes_event <- thebes_summarized_data %>% 
+  mutate( 
     event = case_when(
-      year == 1993 | year == 2011 ~ 'Flood',
-      year == 1988 | year == 2012 ~ 'Drought',
+      year == '1993' ~ 'Flood' ,
+      year == '2011' ~ 'Flood',
+      year == '1988' ~ 'Drought', 
+      year == '2012' ~ 'Drought',
       TRUE ~ 'Normal'
     )
   )
 thebes_event
 ```
-Finally was able to get mean_discharge data to show. Had to break code apart to view mistakes. 
+Finally was able to get mean_discharge data to show. Had to break code apart to view mistakes. Added events to the remaining two years
 
 
 #### Make second data set
@@ -298,7 +300,7 @@ Adding %in% allowed for rows to be created, when prior I had 0 rows created. yea
 #### Plot data
 ```{r}
 ggplot(data=thebes_summarized_data)+
- geom_line(mapping=aes(x=Month,y=mean_discharge,group=year),color="grey70",size=0.3)+
+  geom_line(mapping=aes(x=Month,y=mean_discharge,group=year),color="grey70",size=0.3)+
   geom_line(thebes_event,mapping = aes(Month,mean_discharge,group=year,color="Event"))+
 labs(x=NULL,
      y="Discharge(cf/s,thousands)")
