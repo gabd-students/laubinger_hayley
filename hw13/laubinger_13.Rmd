@@ -1,0 +1,87 @@
+---
+title: "HW 13: Strings and things"
+author: "Hayley Laubinger"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Load Libraries 
+```{r}
+library(tidyverse)
+library(here)
+library(ggthemes)
+library(gghighlight)
+```
+## Part 1: DNA strings
+
+### import data
+```{r}
+beta_gliadin_raw <- read_lines(here("Data", "beta_gliadin.txt"),skip=1)
+beta_gliadin_raw
+```
+Data matches the format from the notes
+
+### Replace whitespace and digits with nothing. Printe results 
+```{r}
+beta_gliadin_cleaned <- str_replace_all(beta_gliadin_raw, "\\d", "") %>%
+  str_replace_all("\\s", "")
+beta_gliadin_cleaned
+```
+Matches data in notes and is 56 lines long
+
+
+### Use 'str_c' to collapse the strings
+```{r}
+beta_gliadan_collapsed <- str_c(beta_gliadin_cleaned,collapse ="")
+beta_gliadan_collapsed
+```
+Matches line in the notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
