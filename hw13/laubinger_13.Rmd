@@ -56,12 +56,143 @@ The DNA sequence is 3310 characters long
 
 ## Find promoter region 
 
-### use str_count() and regex to count the number of IUPAC letters in the sequence that are not A, C, G, or T. 
 ```{r}
-str_count(beta_gliadan_upper, "[A.C.T.G]")
+str_count(beta_gliadan_upper, "A.C.T.G")
 str_count(beta_gliadan_upper, "ATG")
 str_count(beta_gliadan_upper, "TGA|TAA")
 ```
+There is 13 A.C.T.G, 66 "ATG", and 99 "TGA|TAA" codons.
+
+
+
+### Assign the two motif sequences to variables caat_box and tata_box  
+```{r}
+caat_box<- "CCAAT"
+tata_box<- "CTATAA"
+```
+
+
+### count the number
+```{r}
+str_count(beta_gliadan_upper,c(caat_box,tata_box))
+```
+There are 4 "CCAAT" and 1 "CTATAA"
+
+
+
+### Make a search string called caat_seq and count number of sequences 
+```{r}
+caat_seq<- "CCAAT.{100,150}ATG"
+str_count(beta_gliadan_upper, caat_seq)
+```
+There are 2 possible sequences for a string that begins with "CCAAT" and ends with "ATG"
+
+
+### Make a searcg string called tata_seq and count the number of sequences 
+```{r}
+tata_seq<- "CTATAA.{50,100}ATG"
+str_count(beta_gliadan_upper, tata_seq)
+```
+There is 1 sequence.
+
+
+### Use str_extract_all to extract all of the caat_seq sequences 
+```{r}
+caat_seq_all <- str_extract_all(beta_gliadan_upper,caat_seq,simplify = TRUE)
+str_length(caat_seq_all)
+```
+The two lengths are 139 and 148.
+
+
+### Use str_which() to find which caat_seq has the tata_box sequence
+```{r}
+str_which(caat_seq_all,tata_seq)
+```
+Promotor  sequence is 1. 
+
+### Print promotor and determine it’s length.
+```{r}
+promotor<- str_sub(caat_seq_all)
+promotor[1]
+str_length(promotor)
+```
+The promotor length is 139 and 148.
+
+
+## Part 2: Ants
+
+### import ants data
+```{r}
+ants_data <- read_csv(here("Data", "ants.csv"))
+ants_data
+```
+
+
+### Wrangle the data 
+```{r}
+(ants_data_wrangled <- ants_data %>%
+   pivot_longer(names_to = "species",
+                values_to = "abundance",
+                matches("[A-Z].+\\..+",ignore.case = FALSE)) %>%
+   select("year", "species", "abundance") %>%
+  mutate(species = str_replace(species,
+                                "(.{4}).*\\.(.{4}).*", "\\1\\2"),
+          year = factor(year,
+                        ordered = TRUE,
+                        levels = c(2010, 2011))) %>%
+   group_by(year, species) %>%
+   summarise(total_abundance = sum(abundance))
+   )
+```
+
+
+
+### Plot the data
+```{r}
+ggplot(ants_data_wrangled,
+       aes(x = reorder(species,total_abundance),
+       y = total_abundance),
+       group = species) +
+  geom_line(color="Gray70")+
+  geom_point(aes(shape = year),
+             size = 2) +
+  coord_flip() +
+  labs(x = NULL, y = "Total Abundance", shape = "Year") +
+theme_minimal()  
+```
+This matches the graph from the notes. I forgot to add color=grey70. This caused the dots on the plot to not be connected by the horizontal lines.
+
+
+## Part 3:  Featuring Phlox Flowers
+
+### Import and wrangle first set of data
+```{r}
+flower_size_data <- read_csv(here("data","flower_size.csv"))
+flower_size_data
+```
+### wrangle flower data
+```{r}
+flower_size_wrangled <- flower_size_data %>%
+  drop_na("Flower number") %>% 
+  select("species"=Species,"cor_length"=`Corolla length (cm)`,"throat_width"=`Corolla width throat (cm)`) %>% 
+  separate(species, into = c("genus", "species"), extra = "drop") %>%
+   group_by('genus', 'species') %>%
+   summarise(mean_length=mean(cor_length,na.rm = TRUE),
+            mean_width=mean(throat_width,na.rm = TRUE),
+            max_length=max(cor_length,na.rm = TRUE),
+            max_width=max(throat_width,na.rm = TRUE),.groups='drop') 
+flower_size_data
+```
+Wrangled data checks out with the notes. Used drop_na to remove NA flower numbers. 
+
+
+### import second data set 
+
+
+
+
+
+
 
 
 
