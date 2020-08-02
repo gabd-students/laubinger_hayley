@@ -40,10 +40,28 @@ beta_gliadan_collapsed
 Matches line in the notes
 
 
+### Convert it to upper case with str_to_upper().
+```{r}
+beta_gliadan_upper <- str_to_upper(beta_gliadan_collapsed)
+beta_gliadan_upper
+```
 
 
+### Use str_length() returns the length of a string.
+```{r}
+str_length(beta_gliadan_upper)
+```
+The DNA sequence is 3310 characters long 
 
 
+## Find promoter region 
+
+### use str_count() and regex to count the number of IUPAC letters in the sequence that are not A, C, G, or T. 
+```{r}
+str_count(beta_gliadan_upper, "[A.C.T.G]")
+str_count(beta_gliadan_upper, "ATG")
+str_count(beta_gliadan_upper, "TGA|TAA")
+```
 
 
 
