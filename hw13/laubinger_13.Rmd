@@ -265,7 +265,7 @@ flower_mutated_3 %>%
   labs(x="Mean length",y="Mean width",color="Syndrome")
 flower_mutated_3
 ```
-This has created 4 syndromes now and allows fr the data pattern to be seen easier. Mammals have the greatest mean length and wisth, which relfects the bat listed earlier. 
+This has created 4 syndromes now and allows fr the data pattern to be seen easier. Mammals have the greatest mean length and width, which reflects the bat listed earlier. 
 
 ### Highlighting groups with gghighlight
 ```{r}
@@ -278,41 +278,121 @@ flower_mutated_3 %>%
 This highlights the mammals and birds on the graph.
 
 
-###
+### Other improvements: colors and themes
+```{r}
+flower_mutated_3 %>%
+  ggplot(aes(x=mean_length,y=mean_width,color=syndrome_group))+
+  geom_point()+
+  scale_color_brewer(type = "qual", palette = "Dark2") +
+  labs(x = "Mean Length (cm)",
+       y = "Mean Width (cm)",
+       color = "Syndrome")
+```
+This has created different colors to use for "autogamous","bird","insect", and "mammal". 
+
+### Change lettering 
+```{r}
+flower_mutated_3 %>% 
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Mean Length (cm)",
+       y = "Mean Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
+Edits the way the data points appear. Kinda fun.
+
+## Part 4 : Customize plots 
+
+### Plot 1
+```{r}
+flower_mutated_3 %>%
+  ggplot()+
+  geom_point(aes(x = mean_length, 
+                 y = mean_width, 
+                 shape = syndrome_group, 
+                 fill = syndrome_group, 
+                 size = 2)) +
+    labs(shape = "Syndrome", 
+         fill = "Syndrome", 
+         x = "Max Length (cm)",
+         y = "Max Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14))
+```
+These data points are much larger and it makes it hard to distinguish between the crowded data. 
+
+### Plot 2
+```{r}
+flower_mutated_3 %>%
+  ggplot()+
+  geom_point(aes(x = mean_length, 
+                 y = mean_width, 
+                 shape = syndrome_group, 
+                 fill = syndrome_group, 
+                 size = 3)) +
+    labs(shape = "Syndrome", 
+         fill = "Syndrome", 
+         x = "Max Length (cm)",
+         y = "Max Width (cm)") +
+  theme_classic() +
+  scale_shape_manual(values = c(22:25)) +
+   scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 8),
+        axis.title = element_text(size = 6))
+```
+
+### Plot 3 
+```{r}
+flower_mutated_3 %>%
+  ggplot()+
+  geom_point(aes(x = mean_length, 
+                 y = mean_width, 
+                 shape = syndrome_group, 
+                 fill = syndrome_group, 
+                 size = 2)) +
+    labs(shape = "Syndrome", 
+         fill = "Syndrome", 
+         x = "Max Length (cm)",
+         y = "Max Width (cm)") +
+  theme_economist_white() +
+  scale_shape_manual(values = c(22:25)) +
+  theme(axis.text = element_text(size = 8),
+        axis.title = element_text(size = 12))
+```
 
 
+### Plot 4 
+```{r}
+flower_mutated_3 %>%
+  ggplot()+
+  geom_point(aes(x = mean_length, 
+                 y = mean_width, 
+                 shape = syndrome_group, 
+                 fill = syndrome_group, 
+                 size = 4)) +
+    labs(shape = "Syndrome", 
+         fill = "Syndrome", 
+         x = "Max Length (cm)",
+         y = "Max Width (cm)") +
+  theme_igray() +
+  scale_shape_manual(values = c(22:25)) +
+   scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size =12 ))
+```
+four scatterplots of max width as a function of max length were made.I used different text sizes and colors. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### et Vóila :D
 
