@@ -172,31 +172,113 @@ flower_size_data
 ```
 ### wrangle flower data
 ```{r}
-flower_size_wrangled <- flower_size_data %>%
-  drop_na("Flower number") %>% 
-  select("species"=Species,"cor_length"=`Corolla length (cm)`,"throat_width"=`Corolla width throat (cm)`) %>% 
-  separate(species, into = c("genus", "species"), extra = "drop") %>%
-   group_by('genus', 'species') %>%
-   summarise(mean_length=mean(cor_length,na.rm = TRUE),
-            mean_width=mean(throat_width,na.rm = TRUE),
-            max_length=max(cor_length,na.rm = TRUE),
-            max_width=max(throat_width,na.rm = TRUE),.groups='drop') 
-flower_size_data
+flower_data_wrangled <- flower_size_data %>% 
+  filter(!is.na('Flower number')) %>% 
+  select(species = 'Species', cor_length = `Corolla length (cm)`, throat_width = `Corolla width throat (cm)`) %>% 
+  separate(species, into = c('genus', 'species'), extra = 'drop') %>% 
+  group_by(genus, species) %>% 
+  summarise(mean_length = mean(cor_length, na.rm = TRUE),
+            mean_width = mean(throat_width, na.rm = TRUE),
+            max_length = max(cor_length),
+            max_width = max(throat_width)
+            ,.groups = 'drop')
+flower_data_wrangled
 ```
 Wrangled data checks out with the notes. Used drop_na to remove NA flower numbers. 
 
 
 ### import second data set 
+```{r}
+pollinators_data <- read_csv(here("Data", "flower_pollinators.csv"))
+pollinators_data
+```
+
+
+### Remove columns, rows, and seperate species
+```{r}
+pollinators <- pollinators_data %>% 
+  select(-(Color | starts_with("Source"))) %>% 
+  drop_na("Pollinator") %>% 
+  separate(Species, into = c("genus", "species"), extra = 'drop') %>% 
+  separate(Pollinator, into = "Syndrome", extra = 'drop')
+pollinators
+```
+
+
+### Join 2 datasets using inner_join to join smaller to larger
+```{r}
+flower_joined_data <- flower_data_wrangled %>%
+  inner_join(pollinators)
+flower_joined_data
+```
+The two data sets are joined 
+
+
+### Make a scatterplot to show the relationship between mean_length (x-axis) and mean_width (y-axis)
+```{r}
+flower_joined_data %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome)) +
+  labs(x = "Mean length", y = "Mean width")
+```
+Graph seems to match the notes.bats seem to have the largest width and length mean.
+
+### Use mutate with str_replace() and regex patterns to replace all occurences of “beetle” with “beetles,” and “bee” with “bees”.
+```{r}
+flower_mutated <- flower_joined_data %>%
+  mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s")) %>%
+  ggplot() +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome)) +
+  labs(x = "Mean length", y = "Mean width")
+flower_mutated
+```
+'Beetle' was changed to 'beetles' and 'bee' was changed to 'bees'.
+
+
+### use mutate() with str_replace and a regex pattern to replace all instances of “beetles” or “flies” with “other insects”.
+```{r}
+flower_mutated_2 <- flower_joined_data %>% 
+ mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s")) %>%
+  mutate(Syndrome = str_replace(Syndrome, '(beetles|flies)', 'other insects')) %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome)) +
+  labs(x = "Mean length", y = "Mean width")
+flower_mutated_2
+```
+This has added another data pointed names "other insects", as well as removing "flies".
 
 
 
+### Use mutate and case_when to create a new column called syndrome_group and to change autogamous to Autogamous (upper case A), bat to Mammal, hummingbird to Bird, and everything else to Insect. Creating a new column would allow you to access the individual syndromes for future plots, when necessary.
+```{r}
+flower_mutated_3 <- flower_joined_data %>%
+   mutate(Syndrome = str_replace(Syndrome, "(^be.*e$)", "\\1s")) %>%
+  mutate(Syndrome = str_replace(Syndrome, '(beetles|flies)', 'other insects')) %>% 
+  mutate(syndrome_group = case_when(
+           Syndrome == "autogamous" ~ "Autogamous",
+           Syndrome == "bat" ~ "Mammal",
+           Syndrome == "hummingbird" ~ "Bird",
+           TRUE ~ "Insect"))
+flower_mutated_3 %>% 
+   ggplot(aes(x=mean_length,y=mean_width,color=syndrome_group))+
+  geom_point()+
+  labs(x="Mean length",y="Mean width",color="Syndrome")
+flower_mutated_3
+```
+This has created 4 syndromes now and allows fr the data pattern to be seen easier. Mammals have the greatest mean length and wisth, which relfects the bat listed earlier. 
+
+### Highlighting groups with gghighlight
+```{r}
+flower_mutated_3 %>%
+  ggplot(aes(x=mean_length,y=mean_width,color=syndrome_group))+
+  geom_point()+
+  labs(x="Mean length",y="Mean width",color="Syndrome")+
+  gghighlight(syndrome_group=="Mammal"|syndrome_group=="Bird",use_direct_label = FALSE)
+```
+This highlights the mammals and birds on the graph.
 
 
-
-
-
-
-
+###
 
 
 
