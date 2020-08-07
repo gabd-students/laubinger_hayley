@@ -63,10 +63,12 @@ West_fips <-  c(4, 8, 16, 35,
 # Write a Function
 new_total_cases <- function(args){
   length_args <- length(args)
+  first_day_value <- c(0, args[1:length_args - 1])
+  diff <- args - first_day_value
+  return(diff)
 }
 
-
-
+# Hopefully thats right.not throwing any errors 
 
 
 # Initial import and wrangling --------------------------------------------
@@ -188,9 +190,7 @@ ggplot() +
               use_direct_label = FALSE) +
   scale_x_date(date_labels = "%d %b")+
   theme_test() 
-
-
-
+ 
 
 # Plot 3 
 plot_3 <- covid_confirmed_data %>%
@@ -230,7 +230,7 @@ ggplot(plot_3_last,
        aes(x = reorder(State, rate),
            y = rate),
        group = State) +
-  geom_line(color = "gray30") +
+  geom_line(color = "gray60") +
   geom_point(aes(color = month),
              size = 2) +
   coord_flip()
@@ -245,9 +245,80 @@ group_by(`State`, month) %>%
 
 
 # Plot 4
-Plot_4 <- covid_confirmed_data
-filter(State == "MO",date >= (first_mo_case)) %>%
+plot_4 <- covid_confirmed_data %>%
+  filter(State == "MO",
+         date >= dmy(first_mo_case)) %>%
   group_by(date) %>%
   summarise(total_cases = sum(cases)) %>%
   mutate(daily = new_from_total(total_cases))
+plot_4$roll_mean <- 
+  data.table::frollmean(plot_4$daily,
+                        7, align = "right") %>%
+  replace_na(0)            
 
+plot_4%>% 
+  ggplot(aes(x=date,y=daily))+
+  geom_col(color="grey30",fill="grey45")+
+  geom_line(aes(x=date,y=roll_mean),
+            color="#9D2235",
+            size=0.60, alpha=1)+
+  geom_col(data=filter(plot_4,date == dmy ("16 June 2020")),
+           mapping = aes(x = date, y = daily),
+           color = "gray85",
+           fill = "#C8102E")+
+  scale_x_date(date_labels = "%b%d",
+               date_breaks = "2 weeks")+
+  theme_test()+
+  annotate(geom="text",x=mdy("Jun 16 2020"),y=228,label="Missouri reopened\n16 June 2020",color="#C8102E",fill="C8102E")+
+  labs(x=NULL,y="Daily New Cases")
+
+# The spike in cases is dramatic going into summer months, near 2000 new cases a day.
+
+
+# Plot 5 
+plot_5 <- covid_confirmed_data %>%
+  left_join(covid_deaths_data) %>%
+  group_by(State) %>%
+  summarise("Total Cases" = sum(cases, na.rm = TRUE),
+            "Total Deaths" = sum(deaths, na.rm = TRUE)) %>%
+  mutate("Death Rate (%)" = (`Total Deaths` / `Total Cases`)
+         * 100)
+ggplot(states_df) +
+  geom_sf(aes(fill = `Death Rate (%)`)) +
+  scale_fill_viridis_c(name = "COVID-19 Death rate\n% of confirmed cases",
+                       option = "inferno",
+                       labels = c(2.5, 5.0, 7.5, 10.0)) +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+
+table_5 <- plot_5 %>%
+  filter(`Death Rate (%)` >= 5) %>%
+  arrange(desc(`Death Rate (%)`))
+
+states_data <- st_read(here("data",
+                             "cb_2017_us_state_500k.shp"),
+                  stringsAsFactors = TRUE)
+states_df <- states_data %>%
+  dplyr::filter(NAME %in% lower_48) %>%
+  rename(State =  STUSPS)
+states_df <- left_join(states_df, plot_5)  
+
+ggplot(states_df) +
+  geom_sf(aes(fill = `Death Rate (%)`)) +
+  scale_fill_viridis_c(name = "COVID-19 Death rate\n% of confirmed cases",
+                       option = "inferno") +
+  coord_sf(crs = st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+# Yay! It worked. Its seems as you go into more populated states, the death rate increases. Such as New York, which New York City was hit hard with cases, so that would make sense. 
+
+
+
+
+
+
+
+#
